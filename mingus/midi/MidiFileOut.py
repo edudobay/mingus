@@ -37,7 +37,7 @@ class MidiFile:
     """This class generates midi files from MidiTracks."""
 
     tracks = []
-    time_division = "\x00\x48"
+    time_division = b"\x00\x48"
 
     def __init__(self, tracks=[]):
         self.reset()
@@ -47,15 +47,15 @@ class MidiFile:
         """Collects and returns the raw, binary MIDI data
         from the tracks."""
 
-        tracks = [t.get_midi_data() for t in self.tracks if t.track_data != '']
-        return self.header() + ''.join(tracks)
+        tracks = [t.get_midi_data() for t in self.tracks if t.track_data != b'']
+        return self.header() + b''.join(tracks)
 
     def header(self):
         """Returns a header for type 1 midi file"""
 
         tracks = a2b_hex('%04x' % len([t for t in self.tracks if t.track_data
                           != '']))
-        return 'MThd\x00\x00\x00\x06\x00\x01' + tracks + self.time_division
+        return b'MThd\x00\x00\x00\x06\x00\x01' + tracks + self.time_division
 
     def reset(self):
         """Resets every track."""
@@ -97,9 +97,9 @@ Note.channel."""
     t = MidiTrack(bpm)
     m.tracks = [t]
     while repeat >= 0:
-        t.set_deltatime('\x00')
+        t.set_deltatime(b'\x00')
         t.play_Note(note)
-        t.set_deltatime("\x48")
+        t.set_deltatime(b"\x48")
         t.stop_Note(note)
         repeat -= 1
     return m.write_file(file, verbose)
@@ -118,9 +118,9 @@ def write_NoteContainer(
     t = MidiTrack(bpm)
     m.tracks = [t]
     while repeat >= 0:
-        t.set_deltatime('\x00')
+        t.set_deltatime(b'\x00')
         t.play_NoteContainer(notecontainer)
-        t.set_deltatime("\x48")
+        t.set_deltatime(b"\x48")
         t.stop_NoteContainer(notecontainer)
         repeat -= 1
     return m.write_file(file, verbose)

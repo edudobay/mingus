@@ -44,21 +44,21 @@ class MidiTrack:
     """This class is used to generate MIDI events from the
     objects in mingus.containers."""
 
-    track_data = ''
-    delta_time = '\x00'
+    track_data = b''
+    delta_time = b'\x00'
     delay = 0
     bpm = 120
     change_instrument = False
     instrument = 1
 
     def __init__(self, start_bpm=120):
-        self.track_data = ''
+        self.track_data = b''
         self.set_tempo(start_bpm)
 
     def end_of_track(self):
         """Returns the bytes for an end of track meta event."""
 
-        return "\x00\xff\x2f\x00"
+        return b"\x00\xff\x2f\x00"
 
     def play_Note(self, note):
         """Converts a Note object to a midi event and adds it to the track_data. To \
@@ -236,8 +236,8 @@ track_data and the end of track meta event."""
     def reset(self):
         """Resets track_data and delta_time."""
 
-        self.track_data = ''
-        self.delta_time = '\x00'
+        self.track_data = b''
+        self.delta_time = b'\x00'
 
     def set_deltatime(self, delta_time):
         """Sets the delta_time. Can be an integer or a variable length byte."""
@@ -267,7 +267,7 @@ track_data and the end of track meta event."""
 
         ms_per_min = 60000000
         mpqn = a2b_hex('%06x' % (ms_per_min / bpm))
-        return self.delta_time + META_EVENT + SET_TEMPO + '\x03' + mpqn
+        return self.delta_time + META_EVENT + SET_TEMPO + b'\x03' + mpqn
 
     def set_meter(self, meter=(4, 4)):
         """Adds a time signature event for meter to track_data"""
@@ -279,8 +279,8 @@ track_data and the end of track meta event."""
 
         numer = a2b_hex('%02x' % meter[0])
         denom = a2b_hex('%02x' % int(log(meter[1], 2)))
-        return self.delta_time + META_EVENT + TIME_SIGNATURE + '\x04' + numer\
-             + denom + '\x18\x08'
+        return self.delta_time + META_EVENT + TIME_SIGNATURE + b'\x04' + numer\
+             + denom + b'\x18\x08'
 
     def set_key(self, key='C'):
         """Adds a key signature event to the track_data"""
@@ -296,8 +296,8 @@ track_data and the end of track meta event."""
         if val < 0:
             val = 256 + val
         key = a2b_hex('%02x' % val)
-        return self.delta_time + META_EVENT + KEY_SIGNATURE + '\x02' + key\
-             + '\x00'
+        return self.delta_time + META_EVENT + KEY_SIGNATURE + b'\x02' + key\
+             + b'\x00'
 
     def set_track_name(self, name):
         """Adds a meta event for the track."""
@@ -308,7 +308,7 @@ track_data and the end of track meta event."""
         """Returns the bytes for a track name meta event."""
 
         l = self.int_to_varbyte(len(name))
-        return '\x00' + META_EVENT + TRACK_NAME + l + name
+        return b'\x00' + META_EVENT + TRACK_NAME + l + name.encode('ascii')
 
     def int_to_varbyte(self, value):
         """A lot of MIDI variables can be of variable length. This method converts \
