@@ -1,4 +1,8 @@
 from distutils.core import setup
+try:
+    from distutils.command.build_py import build_py_2to3 as build_py
+except ImportError:
+    from distutils.command.build_py import build_py
 
 setup(name= "mingus",
       version = "0.4.3.0",
@@ -23,6 +27,7 @@ http://mingus.googlecode.com
       author_email = "onderstekop@gmail.com",
       url = "http://mingus.googlecode.com/",
       packages = ['mingus', 'mingus.core', 'mingus.containers', 'mingus.extra', 'mingus.midi'],
+      cmdclass = {'build_py': build_py},
       data_files = [('mingus_examples/pygame-drum', ['mingus_examples/pygame-drum/pad.png',\
                          'mingus_examples/pygame-drum/pygame-drum.py']),\
             ('mingus_examples/pygame-piano', ['mingus_examples/pygame-piano/pygame-piano.py',
